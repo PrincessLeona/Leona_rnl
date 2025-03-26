@@ -7,9 +7,9 @@ const EditGenderForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="form-group">
-        <div className="mb-3">
+    <div className="d-flex flex-column align-items-center mt-5">
+      <form onSubmit={handleSubmit} className="w-50"> {/* Adjust width as needed */}
+        <div className="form-group mb-3">
           <label htmlFor="gender">Gender</label>
           <input
             type="text"
@@ -19,12 +19,15 @@ const EditGenderForm = () => {
           />
         </div>
         <div className="d-flex justify-content-end">
+          <button type="submit" className="btn btn-primary me-2">
+            Save
+          </button>
           <button type="submit" className="btn btn-primary">
-            UPDATE
+            Update
           </button>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };
 
