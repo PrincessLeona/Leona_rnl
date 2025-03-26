@@ -1,16 +1,15 @@
 import { FormEvent } from 'react';
-import { Link } from 'react-router-dom'; // Make sure to import Link
+import { Link } from 'react-router-dom'; 
 
 const DeleteGenderForm = () => {
   const handleDelete = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle the deletion logic here
     console.log("Gender deleted");
   };
 
   return (
     <div className="d-flex flex-column align-items-center mt-5">
-      <form onSubmit={handleDelete} className="w-50"> {/* Adjust width as needed */}
+      <form onSubmit={handleDelete} className="w-50">
         <div className="form-group mb-3">
           <label htmlFor="gender">Gender</label>
           <input
