@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import Genders from "../../interfaces/Genders";
-import GenderServices from "../../services/GenderServices";
+import GenderService from "../../services/GenderService";
 import ErrorHandler from "../../handler/ErrorHandler";
 import Spinner from "../Spinner";
+import { Link } from "react-router-dom";
 
 interface GendersTableProps {
   refreshGenders: boolean;
@@ -15,7 +16,7 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
   });
 
   const handleLoadGenders = () => {
-    GenderServices.loadGenders()
+    GenderService.loadGenders()
       .then((res) => {
         if (res.status === 200) {
           setState((prevState) => ({
@@ -61,16 +62,19 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
                 <Spinner />
               </td>
             </tr>
-          ) : (
+          ) : state.genders.length > 0 ? (
             state.genders.map((gender, index) => (
               <tr className="align-middle" key={index}>
                 <td>{index + 1}</td>
                 <td>{gender.gender}</td>
                 <td>
                   <div className="btn-group">
-                    <button type="button" className="btn btn-success">
+                    <Link
+                      to={`/gender/edit/${gender.gender_id}`}
+                      className="btn btn-success"
+                    >
                       Edit
-                    </button>
+                    </Link>
                     <button type="button" className="btn btn-danger">
                       Delete
                     </button>
@@ -78,6 +82,12 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
                 </td>
               </tr>
             ))
+          ) : (
+            <tr className="align-middle">
+              <td className="text-center" colSpan={3}>
+                No Genders Found
+              </td>
+            </tr>
           )}
         </tbody>
       </table>
