@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import GenderService from "../../services/GenderService";
-import ErrorHandler from "../../handler/ErrorHandler";
-import Spinner from "../Spinner";
-import GenderFieldErrors from "../../interfaces/GenderFieldErrors";
-import SpinnerSmall from "../SpinnerSmall";
+import GenderService from "../../../services/GenderService";
+import ErrorHandler from "../../../handler/ErrorHandler";
+import Spinner from "../../Spinner";
+import GenderFieldErrors from "../../../interfaces/GenderFieldErrors";
+import SpinnerSmall from "../../SpinnerSmall";
 
 interface EditGenderFormProps {
   onGenderUpdate: (message: string) => void;
@@ -16,6 +16,7 @@ const EditGenderForm = ({ onGenderUpdate }: EditGenderFormProps) => {
   const [state, setState] = useState({
     loadingGet: true,
     loadingUpdate: false,
+    gender_id: 0,
     gender: "",
     errors: {} as GenderFieldErrors,
   });
@@ -39,6 +40,7 @@ const EditGenderForm = ({ onGenderUpdate }: EditGenderFormProps) => {
         if (res.status === 200) {
           setState((prevState) => ({
             ...prevState,
+            gender_id: res.data.gender.gender_id,
             gender: res.data.gender.gender,
           }));
         } else {
@@ -62,49 +64,43 @@ const EditGenderForm = ({ onGenderUpdate }: EditGenderFormProps) => {
   const handleUpdateGender = (e: FormEvent) => {
     e.preventDefault();
 
-    if (gender_id) {
-      const parsedGenderId = parseInt(gender_id);
+    setState((prevState) => ({
+      ...prevState,
+      loadingUpdate: true,
+    }));
 
-      setState((prevState) => ({
-        ...prevState,
-        loadingUpdate: true,
-      }));
-
-      GenderService.updateGender(parsedGenderId, state)
-        .then((res) => {
-          if (res.status === 200) {
-            setState((prevState) => ({
-              ...prevState,
-              errors: {} as GenderFieldErrors,
-            }));
-
-            onGenderUpdate(res.data.message);
-          } else {
-            console.error(
-              "Unexpected status error while updating gender: ",
-              res.status
-            );
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 422) {
-            setState((prevState) => ({
-              ...prevState,
-              errors: error.response.data.errors,
-            }));
-          } else {
-            ErrorHandler(error, null);
-          }
-        })
-        .finally(() => {
+    GenderService.updateGender(state.gender_id, state)
+      .then((res) => {
+        if (res.status === 200) {
           setState((prevState) => ({
             ...prevState,
-            loadingUpdate: false,
+            errors: {} as GenderFieldErrors,
           }));
-        });
-    } else {
-      console.error("Invalid gender_id: ", gender_id);
-    }
+
+          onGenderUpdate(res.data.message);
+        } else {
+          console.error(
+            "Unexpected status error while updating gender: ",
+            res.status
+          );
+        }
+      })
+      .catch((error) => {
+        if (error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+          }));
+        } else {
+          ErrorHandler(error, null);
+        }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingUpdate: false,
+        }));
+      });
   };
 
   useEffect(() => {
