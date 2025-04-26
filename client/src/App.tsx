@@ -2,9 +2,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Genders from "./pages/gender/Genders";
 import EditGender from "./pages/gender/EditGender";
 import DeleteGender from "./pages/gender/DeleteGender";
-import Users from "./pages/user/Users";
+import User from "./pages/user/Users";
 import Login from "./pages/login/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Feedback from "./components/forms/automate/Feedback";
 
 const router = createBrowserRouter([
   {
@@ -39,7 +40,15 @@ const router = createBrowserRouter([
     path: "/users",
     element: (
       <ProtectedRoute>
-        <Users />
+        <User />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/feedback",
+    element: (
+      <ProtectedRoute>
+        <Feedback />
       </ProtectedRoute>
     ),
   },

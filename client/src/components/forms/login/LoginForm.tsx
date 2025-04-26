@@ -61,7 +61,6 @@ const LoginForm = () => {
         }));
       });
   };
-
   const handleShowAlertMessage = (
     message: string,
     isSuccess: boolean,
@@ -86,7 +85,10 @@ const LoginForm = () => {
         isVisible={isVisible}
         onClose={handleCloseAlertMessage}
       />
-      <form onSubmit={handleLogin}>
+      <form
+        className="bg-secondary-subtle p-4 rounded-3 shadow-sm"
+        onSubmit={handleLogin}
+      >
         <div className="mb-3">
           <label htmlFor="email">Email</label>
           <input
@@ -126,7 +128,7 @@ const LoginForm = () => {
           >
             {state.loadingLogin ? (
               <>
-                <SpinnerSmall /> Logging In...
+                <SpinnerSmall /> Logging in...
               </>
             ) : (
               "Login"
