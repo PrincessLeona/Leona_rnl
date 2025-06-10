@@ -2,39 +2,92 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, HasApiTokens, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'tbl_users';
-    protected $primaryKey = 'user_id';
     protected $fillable = [
         'first_name',
         'middle_name',
         'last_name',
         'suffix_name',
-        'age',
         'birth_date',
-        'gender_id',
+        'gender',
         'address',
         'contact_number',
         'email',
         'password',
-        'is_deleted',
-    ];
-    protected $hidden = [
-        'password',
+        'role_id',
+        'is_active',
     ];
 
-    public function gender(): BelongsTo
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'birth_date' => 'date',
+        'is_active' => 'boolean',
+    ];
+
+    public function role(): BelongsTo
     {
-        return $this->belongsTo(Gender::class, 'gender_id', 'gender_id');
+        return $this->belongsTo(Role::class);
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        $name = $this->first_name;
+        
+        if ($this->middle_name) {
+            $name .= ' ' . $this->middle_name;
+        }
+        
+        $name .= ' ' . $this->last_name;
+        
+        if ($this->suffix_name) {
+            $name .= ' ' . $this->suffix_name;
+        }
+        
+        return $name;
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role->name === $role;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isManager(): bool
+    {
+        return $this->hasRole('manager');
+    }
+
+    public function isCashier(): bool
+    {
+        return $this->hasRole('cashier');
     }
 }
