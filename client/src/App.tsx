@@ -1,61 +1,50 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Genders from "./pages/gender/Genders";
-import EditGender from "./pages/gender/EditGender";
-import DeleteGender from "./pages/gender/DeleteGender";
-import User from "./pages/user/Users";
-import Login from "./pages/login/Login";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Feedback from "./components/forms/automate/Feedback";
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from './contexts/AuthContext'
+import LoginPage from './pages/LoginPage'
+import DashboardLayout from './components/layout/DashboardLayout'
+import Dashboard from './pages/Dashboard'
+import UsersPage from './pages/UsersPage'
+import ProductsPage from './pages/ProductsPage'
+import CategoriesPage from './pages/CategoriesPage'
+import TransactionsPage from './pages/TransactionsPage'
+import ReportsPage from './pages/ReportsPage'
+import SettingsPage from './pages/SettingsPage'
+import LoadingSpinner from './components/ui/LoadingSpinner'
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Login />,
-  },
-  {
-    path: "/genders",
-    element: (
-      <ProtectedRoute>
-        <Genders />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/gender/edit/:gender_id",
-    element: (
-      <ProtectedRoute>
-        <EditGender />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/gender/delete/:gender_id",
-    element: (
-      <ProtectedRoute>
-        <DeleteGender />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/users",
-    element: (
-      <ProtectedRoute>
-        <User />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/feedback",
-    element: (
-      <ProtectedRoute>
-        <Feedback />
-      </ProtectedRoute>
-    ),
-  },
-]);
+function App() {
+  const { user, loading } = useAuth()
 
-const App = () => {
-  return <RouterProvider router={router} />;
-};
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    )
+  }
 
-export default App;
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    )
+  }
+
+  return (
+    <DashboardLayout>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/users" element={<UsersPage />} />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/transactions" element={<TransactionsPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </DashboardLayout>
+  )
+}
+
+export default App
