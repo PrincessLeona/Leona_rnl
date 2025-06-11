@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\DiscountController;
@@ -18,6 +19,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+
+    // Role management (Admin only)
+    Route::middleware('role:admin')->group(function () {
+        Route::apiResource('roles', RoleController::class);
+    });
 
     // User management (Admin only)
     Route::middleware('role:admin')->group(function () {
